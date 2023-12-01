@@ -1,54 +1,21 @@
 defmodule Day01 do
-  def solve_a() do
-    input =
-      FileHelper.read_as_lines(13)
-      |> Enum.map(fn word ->
-        String.split(word, "")
-        |> Enum.map(fn letter ->
-          case Integer.parse(letter) do
-            {result, _} -> result
-            :error -> nil
-          end
-        end)
-        |> Enum.reject(fn v -> v == nil end)
-      end)
-      |> Enum.reduce(0, fn cur, acc ->
-        first = hd(cur) |> Integer.to_string()
-        last = List.last(cur, nil) |> Integer.to_string()
+  def extract_numbers(input), do: Regex.scan(~r/\d/, input) |> List.flatten()
 
-        str = first <> last
+  def count(input) do
+    first_digit = hd(input)
+    last_digit = List.last(input, nil)
 
-        {result, _} = Integer.parse(str)
-
-        acc = acc + result
-      end)
+    case Integer.parse(first_digit <> last_digit) do
+      {result, _} -> result
+      :error -> 0
+    end
   end
 
-  def solve_b() do
-    input =
-      FileHelper.read_as_lines(13)
-      |> Enum.map(fn word ->
-        word
-        |> replace()
-        |> String.split("")
-        |> Enum.map(fn letter ->
-          case Integer.parse(letter) do
-            {result, _} -> result
-            :error -> nil
-          end
-        end)
-        |> Enum.reject(fn v -> v == nil end)
-      end)
-      |> Enum.reduce(0, fn cur, acc ->
-        first = hd(cur) |> Integer.to_string()
-        last = List.last(cur, nil) |> Integer.to_string()
-
-        str = first <> last
-
-        {result, _} = Integer.parse(str)
-
-        acc = acc + result
-      end)
+  def add_first_and_last_digit(inputs) do
+    inputs
+    |> Enum.map(&extract_numbers/1)
+    |> Enum.map(&count/1)
+    |> Enum.sum()
   end
 
   def replace(word) do
@@ -62,6 +29,16 @@ defmodule Day01 do
     |> String.replace("seven", "s7n")
     |> String.replace("eight", "e8t")
     |> String.replace("nine", "n9e")
-    |> IO.inspect()
+  end
+
+  def solve_a(input) do
+    input
+    |> add_first_and_last_digit()
+  end
+
+  def solve_b(input) do
+    input
+    |> Enum.map(&replace/1)
+    |> add_first_and_last_digit()
   end
 end

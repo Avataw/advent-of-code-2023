@@ -1,6 +1,21 @@
 defmodule StringHelper do
   @doc """
 
+  Returns all lines of a multiline string as an enum
+
+  ## Examples
+    iex> StringHelper.to_lines("abb\\nccc")
+    ["abb", "ccc"]
+
+  """
+  def to_lines(string) do
+    string
+    |> String.split("\n")
+    |> Enum.reject(fn input -> input == "" end)
+  end
+
+  @doc """
+
   Returns a map of every character and it's occurence in the string
 
   ## Examples
@@ -10,7 +25,6 @@ defmodule StringHelper do
   """
   def count_letters(string) do
     string
-    # get's
     |> String.graphemes()
     |> Enum.reduce(Map.new(), fn char, occs ->
       Map.update(occs, char, 1, &(&1 + 1))
