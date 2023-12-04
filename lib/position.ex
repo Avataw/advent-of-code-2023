@@ -3,6 +3,19 @@ defmodule Position do
 
   def new([x, y]), do: %Position{x: x, y: y}
 
+  def around(pos) do
+    [
+      up(pos),
+      upRight(pos),
+      right(pos),
+      downRight(pos),
+      down(pos),
+      downLeft(pos),
+      left(pos),
+      upLeft(pos)
+    ]
+  end
+
   def up(%Position{x: x, y: y}), do: %Position{x: x, y: y - 1}
 
   def right(%Position{x: x, y: y}), do: %Position{x: x + 1, y: y}
