@@ -47,6 +47,6 @@ defmodule Day03Test do
 
   test "solves b" do
     input = FileHelper.read_as_lines(3)
-    assert Day03.solve_b(input) == 1
+    assert Day03.solve_b(input) == 80_253_814
   end
 end
