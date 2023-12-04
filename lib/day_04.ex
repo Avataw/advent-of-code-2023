@@ -35,6 +35,7 @@ defmodule Day04 do
   def count_instances(winning_cards) do
     winning_cards
     |> Enum.with_index()
+
     |> Enum.reduce(%{}, fn {wins, index}, instances ->
       instance_count = Map.get(instances, index, 0) + 1
 

@@ -3,6 +3,10 @@ defmodule Position do
 
   def new([x, y]), do: %Position{x: x, y: y}
 
+  def equals?(pos1, pos2) do
+    pos1.x == pos2.x && pos1.y == pos2.y
+  end
+
   def around(pos) do
     [
       up(pos),
