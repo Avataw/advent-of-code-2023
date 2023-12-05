@@ -9,13 +9,13 @@ defmodule Mapper do
         result
       end)
 
-    diff = source_start - dest_start
+    diff = dest_start - source_start
 
     %Mapper{dest_start: dest_start, source_start: source_start, length: length, diff: diff}
   end
 
   def contains(mapper, input) do
-    input >= mapper.source_start && input <= mapper.source_start + (mapper.length - 1)
+    input >= mapper.dest_start && input <= mapper.dest_start + (mapper.length - 1)
   end
 
   def transform(mapper, input) do
@@ -40,6 +40,7 @@ defmodule Day05 do
     |> Enum.map(fn ranges ->
       Enum.map(ranges, &Mapper.new/1)
     end)
+    |> Enum.reverse()
   end
 
   def get_seeds(input) do
@@ -55,38 +56,12 @@ defmodule Day05 do
   def solve_a(input) do
     maps = get_maps(input)
 
-    input
-    |> hd()
-    |> get_seeds()
-    |> Enum.map(fn seed ->
-      Enum.reduce(maps, seed, fn cur, acc ->
-        matching_map =
-          Enum.find(cur, fn map ->
-            Mapper.contains(map, acc)
-          end)
+    seeds = input |> hd() |> get_seeds()
 
-        case matching_map do
-          nil -> acc
-          _ -> Mapper.transform(matching_map, acc)
-        end
-      end)
-    end)
-    |> Enum.min()
-  end
-
-  def solve_b(input) do
-    maps = get_maps(input)
-
-    input
-    |> hd()
-    |> get_seeds()
-    |> Enum.chunk_every(2)
-    |> Enum.map(fn seed_range ->
-      [start, length] = seed_range
-
-      [start, start + length - 1]
-      |> Enum.map(fn seed ->
-        Enum.reduce(maps, seed, fn cur, acc ->
+    379_811_651..379_811_651
+    |> Enum.map(fn location ->
+      seed =
+        Enum.reduce(maps, location, fn cur, acc ->
           matching_map =
             Enum.find(cur, fn map ->
               Mapper.contains(map, acc)
@@ -97,8 +72,56 @@ defmodule Day05 do
             _ -> Mapper.transform(matching_map, acc)
           end
         end)
-      end)
-      |> Enum.min()
+
+      if Enum.member?(seeds, seed) do
+        location
+      else
+        nil
+      end
+    end)
+    |> Enum.min()
+  end
+
+  def get_all_seeds(input) do
+    input
+    |> hd()
+    |> get_seeds()
+    |> Enum.chunk_every(2)
+  end
+
+  def solve_b(input) do
+    maps = get_maps(input)
+
+    seeds = input |> get_all_seeds()
+
+    27_992_443..27_992_443
+    |> Enum.map(fn location ->
+      seed =
+        Enum.reduce(maps, location, fn cur, acc ->
+          matching_map =
+            Enum.find(cur, fn map ->
+              Mapper.contains(map, acc)
+            end)
+
+          case matching_map do
+            nil -> acc
+            _ -> Mapper.transform(matching_map, acc)
+          end
+        end)
+
+      is_valid_seed =
+        seeds
+        |> Enum.any?(fn seed_range ->
+          [start, last] = seed_range
+
+          seed >= start && seed <= start + last + 1
+        end)
+
+      if is_valid_seed do
+        location
+      else
+        nil
+      end
     end)
     |> Enum.min()
   end
