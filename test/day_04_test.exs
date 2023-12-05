@@ -16,7 +16,6 @@ defmodule Day04Test do
     assert Day04.solve_a(input) == 13
   end
 
-  # 441840 too low
   test "solves a" do
     input = FileHelper.read_as_lines(4)
     assert Day04.solve_a(input) == 24706
