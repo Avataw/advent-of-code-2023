@@ -28,8 +28,6 @@ defmodule Day06Test do
     assert Day06.solve_b(input) == 71503
   end
 
-  # takes too long (>3 seconds) :(
-  @tag :skip
   test "solves b" do
     input = FileHelper.read_as_lines(6)
     assert Day06.solve_b(input) == 32_583_852

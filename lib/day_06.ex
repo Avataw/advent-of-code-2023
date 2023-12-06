@@ -18,12 +18,7 @@ defmodule Day06 do
     time_and_distances
     |> Enum.map(fn {time, max_distance} ->
       0..time
-      |> Enum.map(fn speed ->
-        time_left = time - speed
-
-        speed * time_left
-      end)
-      |> Enum.count(fn distance -> distance > max_distance end)
+      |> Enum.count(fn speed -> speed * (time - speed) > max_distance end)
     end)
   end
 
