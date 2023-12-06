@@ -14,8 +14,8 @@ defmodule Day06 do
     Enum.zip(times, distances)
   end
 
-  def solve_a(input) do
-    parse(input)
+  def count_wins(time_and_distances) do
+    time_and_distances
     |> Enum.map(fn {time, max_distance} ->
       0..time
       |> Enum.map(fn speed ->
@@ -25,38 +25,19 @@ defmodule Day06 do
       end)
       |> Enum.count(fn distance -> distance > max_distance end)
     end)
+  end
+
+  def solve_a(input) do
+    parse(input)
+    |> count_wins()
     |> Enum.product()
   end
 
-  def parse_b(input) do
-    [time, distance] =
-      input
-      |> IO.inspect()
-      |> Enum.map(fn line ->
-        number =
-          line
-          |> String.replace(" ", "")
-          |> ParseHelper.get_after(":")
-
-        {result, _} = Integer.parse(number)
-        result
-      end)
-      |> IO.inspect()
-
-    [{time, distance}]
-  end
-
   def solve_b(input) do
-    parse_b(input)
-    |> Enum.map(fn {time, max_distance} ->
-      0..time
-      |> Enum.map(fn speed ->
-        time_left = time - speed
-
-        speed * time_left
-      end)
-      |> Enum.count(fn distance -> distance > max_distance end)
-    end)
+    input
+    |> Enum.map(fn line -> String.replace(line, " ", "") end)
+    |> parse()
+    |> count_wins()
     |> Enum.product()
   end
 end
