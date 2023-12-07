@@ -63,4 +63,16 @@ defmodule ParseHelper do
     [[_, result]] = Regex.scan(~r/#{first_char}(.+?)#{second_char}/, search_input)
     result
   end
+
+  @doc """
+  parses a string to a number
+
+  ## Examples
+    iex> ParseHelper.get_number("12345")
+    12345
+  """
+  def get_number(string) do
+    {result, _} = Integer.parse(string)
+    result
+  end
 end
