@@ -54,4 +54,28 @@ defmodule EnumHelper do
     |> Enum.frequencies()
     |> Enum.max_by(fn {_, value} -> value end)
   end
+
+  @doc """
+
+  Returns the last element of an enum.
+
+  ## Examples
+    iex> EnumHelper.last([1,2,3])
+    3
+  """
+  def last(enum) do
+    enum |> Enum.reverse() |> hd
+  end
+
+  @doc """
+
+  Returns the last element of an enum.
+
+  ## Examples
+    iex> EnumHelper.push([1,2], 3)
+    [1,2,3]
+  """
+  def push(enum, value) do
+    [value | enum |> Enum.reverse()] |> Enum.reverse()
+  end
 end
