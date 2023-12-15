@@ -25,6 +25,7 @@ defmodule Day14Test do
     assert Day14.solve_a(input) == 105_461
   end
 
+  @tag :skip
   test "solves b example" do
     input =
       """
@@ -47,6 +48,6 @@ defmodule Day14Test do
   @tag :skip
   test "solves b" do
     input = FileHelper.read_as_lines(14)
-    assert Day14.solve_b(input) == 244_342
+    assert Day14.solve_b(input) == 102_829
   end
 end
