@@ -7,6 +7,10 @@ defmodule Position do
     pos1.x == pos2.x && pos1.y == pos2.y
   end
 
+  def manhattan_distance_to(pos1, pos2) do
+    abs(pos1.x - pos2.x) + abs(pos1.y - pos2.y)
+  end
+
   def around(pos) do
     [
       up(pos),
