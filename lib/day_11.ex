@@ -43,48 +43,7 @@ defmodule Day11 do
     manhattan_distance + expanding_x + expanding_y
   end
 
-  def solve_a(input) do
-    grid = input |> construct_grid
-
-    galaxies = grid |> Map.filter(fn {_, value} -> value == "#" end) |> Map.keys()
-
-    {expanding_rows, expanding_cols} = get_expanding_space(galaxies, length(input) - 1)
-
-    galaxies = galaxies |> Enum.with_index()
-
-    galaxies
-    |> Enum.reduce(%{}, fn {galaxy, id}, acc ->
-      galaxies
-      |> Enum.reject(fn {_, other_id} -> other_id == id end)
-      |> Enum.reduce(acc, fn {other_galaxy, other_id}, acc2 ->
-        key = [id, other_id] |> Enum.sort()
-
-        previous_distance = acc2 |> Map.get(key)
-        current_distance = get_distance(galaxy, other_galaxy, expanding_rows, expanding_cols)
-
-        case previous_distance do
-          nil ->
-            Map.put(acc2, key, current_distance)
-
-          _ ->
-            lowest_distance = [previous_distance, current_distance] |> Enum.sort() |> hd()
-            Map.update!(acc2, key, fn _ -> lowest_distance end)
-        end
-      end)
-    end)
-    |> Map.values()
-    |> Enum.sum()
-  end
-
-  def solve_b(input, factor) do
-    grid = input |> construct_grid
-
-    galaxies = grid |> Map.filter(fn {_, value} -> value == "#" end) |> Map.keys()
-
-    {expanding_rows, expanding_cols} = get_expanding_space(galaxies, length(input) - 1)
-
-    galaxies = galaxies |> Enum.with_index()
-
+  def get_shortest_paths(galaxies, expanding_rows, expanding_cols, factor \\ 2) do
     galaxies
     |> Enum.reduce(%{}, fn {galaxy, id}, acc ->
       galaxies
@@ -107,6 +66,32 @@ defmodule Day11 do
         end
       end)
     end)
+  end
+
+  def solve_a(input) do
+    grid = input |> construct_grid
+
+    galaxies = grid |> Map.filter(fn {_, value} -> value == "#" end) |> Map.keys()
+
+    {expanding_rows, expanding_cols} = get_expanding_space(galaxies, length(input) - 1)
+
+    galaxies
+    |> Enum.with_index()
+    |> get_shortest_paths(expanding_rows, expanding_cols)
+    |> Map.values()
+    |> Enum.sum()
+  end
+
+  def solve_b(input, factor) do
+    grid = input |> construct_grid
+
+    galaxies = grid |> Map.filter(fn {_, value} -> value == "#" end) |> Map.keys()
+
+    {expanding_rows, expanding_cols} = get_expanding_space(galaxies, length(input) - 1)
+
+    galaxies
+    |> Enum.with_index()
+    |> get_shortest_paths(expanding_rows, expanding_cols, factor)
     |> Map.values()
     |> Enum.sum()
   end
