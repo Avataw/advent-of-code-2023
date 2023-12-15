@@ -26,9 +26,8 @@ defmodule Day15Test do
     assert Day15.solve_b(input) == 145
   end
 
-  @tag :skip
   test "solves b" do
     input = FileHelper.read_as_lines(15)
-    assert Day15.solve_b(input) == 593_821_230_983
+    assert Day15.solve_b(input) == 244_342
   end
 end
