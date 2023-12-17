@@ -69,9 +69,26 @@ defmodule StringHelper do
     "j","k","l","m","n","o","p","q","r",
     "s","t","u","v","w","x","y","z"]
   """
-  @spec alphabetize() :: [String.t()]
   def alphabetize() do
     ?a..?z
     |> Enum.map(&<<&1::utf8>>)
+  end
+
+  @doc """
+    ## Examples
+    iex> StringHelper.replace_at("abc", 1, "d")
+    "adc"
+
+    iex> StringHelper.replace_at("abc", 0, "d")
+    "dbc"
+  """
+  def replace_at(string, index, new_char) do
+    pre = String.slice(string, 0..(index - 1))
+    post = String.slice(string, (index + 1)..-1)
+
+    case index do
+      0 -> new_char <> post
+      _ -> pre <> new_char <> post
+    end
   end
 end

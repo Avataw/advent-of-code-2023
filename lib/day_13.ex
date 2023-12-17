@@ -55,8 +55,6 @@ defmodule Day13 do
       |> Enum.reverse()
       |> Enum.map(fn l -> Enum.join(l) end)
 
-    # |> IO.inspect()
-
     mountain |> find_vertical_mirror()
   end
 
@@ -72,7 +70,57 @@ defmodule Day13 do
     |> Enum.sum()
   end
 
+  def get_mountain_permutations(mountain) do
+    line_length = mountain |> hd() |> String.length()
+
+    input = mountain |> Enum.join()
+
+    input
+    |> String.graphemes()
+    |> Enum.with_index()
+    |> Enum.map(fn {char, index} ->
+      new_char =
+        case char do
+          "." -> "#"
+          "#" -> "."
+        end
+
+      StringHelper.replace_at(input, index, new_char)
+      |> String.graphemes()
+      |> Enum.chunk_every(line_length)
+      |> Enum.map(&Enum.join/1)
+    end)
+  end
+
   def solve_b(input) do
-    1
+    input
+    |> parse
+    |> Enum.map(fn mountain ->
+      vertical_result = find_vertical_mirror(mountain)
+      horizontal_result = find_horizontal_mirror(mountain)
+
+      mountain
+      |> get_mountain_permutations()
+      |> Enum.map(fn perm ->
+        vertical =
+          find_vertical_mirror(perm)
+          |> Enum.reject(fn v -> vertical_result |> Enum.member?(v) end)
+          |> Enum.sum()
+
+        horizontal =
+          find_horizontal_mirror(perm)
+          |> Enum.reject(fn h -> horizontal_result |> Enum.member?(h) end)
+          |> Enum.map(fn h -> h * 100 end)
+          |> Enum.sum()
+
+        case {vertical, horizontal} do
+          {0, 0} -> nil
+          {v, h} -> v + h
+        end
+      end)
+      |> Enum.reject(fn r -> r == nil end)
+      |> hd()
+    end)
+    |> Enum.sum()
   end
 end
