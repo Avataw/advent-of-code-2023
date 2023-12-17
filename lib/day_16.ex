@@ -202,7 +202,7 @@ defmodule Day16 do
 
     top_row =
       grid
-      |> Map.filter(fn {pos, symbol} ->
+      |> Map.filter(fn {pos} ->
         pos.y == 0
       end)
       |> Map.keys()
@@ -210,7 +210,7 @@ defmodule Day16 do
 
     bottom_row =
       grid
-      |> Map.filter(fn {pos, symbol} ->
+      |> Map.filter(fn {pos} ->
         pos.y == max_y - 1
       end)
       |> Map.keys()
@@ -218,7 +218,7 @@ defmodule Day16 do
 
     left_row =
       grid
-      |> Map.filter(fn {pos, symbol} ->
+      |> Map.filter(fn {pos} ->
         pos.x == 0
       end)
       |> Map.keys()
@@ -226,7 +226,7 @@ defmodule Day16 do
 
     right_row =
       grid
-      |> Map.filter(fn {pos, symbol} ->
+      |> Map.filter(fn {pos} ->
         pos.x == max_x - 1
       end)
       |> Map.keys()

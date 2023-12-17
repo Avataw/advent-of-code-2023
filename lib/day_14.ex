@@ -80,14 +80,11 @@ defmodule Day14 do
   end
 
   def print(input) do
-    IO.puts("-----------------")
-
-    lines =
-      input
-      |> Enum.map(fn {_, char} -> char end)
-      |> Enum.chunk_every(10)
-      |> Enum.map(&Enum.join/1)
-      |> Enum.each(&IO.puts/1)
+    input
+    |> Enum.map(fn {_, char} -> char end)
+    |> Enum.chunk_every(10)
+    |> Enum.map(&Enum.join/1)
+    |> Enum.each(&IO.puts/1)
 
     input
   end
