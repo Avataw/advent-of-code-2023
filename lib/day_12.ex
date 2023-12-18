@@ -1,5 +1,5 @@
 defmodule Day12 do
-  alias Erl2exVendored.Pipeline.Parse
+  use Memoize
 
   def parse(input) do
     input
@@ -8,9 +8,11 @@ defmodule Day12 do
     end)
   end
 
-  def rec_solve([], [], 0), do: 1
+  defmemo rec_solve([], [], 0) do
+    1
+  end
 
-  def rec_solve(line, [], hashes) do
+  defmemo rec_solve(line, [], hashes) do
     cond do
       hashes > 0 -> 0
       line |> Enum.all?(fn c -> c != "#" end) -> 1
@@ -18,19 +20,15 @@ defmodule Day12 do
     end
   end
 
-  def rec_solve([], target, hashes) do
+  defmemo rec_solve([], target, hashes) do
     cond do
-      target |> length() == 1 and target |> hd() == hashes ->
-        1
-
-      true ->
-        0
+      target |> length() == 1 and target |> hd() == hashes -> 1
+      true -> 0
     end
   end
 
-  def rec_solve(line, target, hashes) do
+  defmemo rec_solve(line, target, hashes) do
     first_letter = line |> hd()
-
     current_target = target |> hd()
 
     line = line |> Enum.drop(1)
@@ -50,8 +48,8 @@ defmodule Day12 do
 
       "?" ->
         [
-          rec_solve(["." | line], target, hashes),
-          rec_solve(["#" | line], target, hashes)
+          rec_solve(["#" | line], target, hashes),
+          rec_solve(["." | line], target, hashes)
         ]
         |> Enum.sum()
 
@@ -72,6 +70,26 @@ defmodule Day12 do
   end
 
   def solve_b(input) do
-    1
+    parse(input)
+    |> Enum.with_index()
+    |> Enum.map(fn {[line, target], index} ->
+      line =
+        [line]
+        |> Stream.cycle()
+        |> Enum.take(5)
+        |> Enum.join("?")
+        |> String.graphemes()
+
+      target =
+        [target]
+        |> Stream.cycle()
+        |> Enum.take(5)
+        |> Enum.join(",")
+        |> String.split(",")
+        |> Enum.map(&ParseHelper.get_number/1)
+
+      rec_solve(line, target, 0) |> IO.inspect(label: "solution for #{index}")
+    end)
+    |> Enum.sum()
   end
 end
