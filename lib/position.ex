@@ -24,6 +24,7 @@ defmodule Position do
     ]
   end
 
+
   def up(%Position{x: x, y: y}), do: %Position{x: x, y: y - 1}
 
   def right(%Position{x: x, y: y}), do: %Position{x: x + 1, y: y}
