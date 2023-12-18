@@ -1,7 +1,6 @@
 defmodule Day18Test do
   use ExUnit.Case, async: true
 
-  @tag :skip
   test "solves a example" do
     input =
       """
@@ -25,7 +24,6 @@ defmodule Day18Test do
     assert Day18.solve_a(input) == 62
   end
 
-  @tag :skip
   test "solves a" do
     input = FileHelper.read_as_lines(18)
     assert Day18.solve_a(input) == 34329
@@ -54,9 +52,8 @@ defmodule Day18Test do
     assert Day18.solve_b(input) == 952_408_144_115
   end
 
-  @tag :skip
   test "solves b" do
     input = FileHelper.read_as_lines(18)
-    assert Day18.solve_b(input) == 8023
+    assert Day18.solve_b(input) == 42_617_947_302_920
   end
 end
