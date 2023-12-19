@@ -32,33 +32,28 @@ defmodule Day19Test do
     assert Day19.solve_a(input) == 425_811
   end
 
-  @tag :skip
   test "solves b example" do
     input =
       """
-      R 6 (#70c710)
-      D 5 (#0dc571)
-      L 2 (#5713f0)
-      D 2 (#d2c081)
-      R 2 (#59c680)
-      D 2 (#411b91)
-      L 5 (#8ceee2)
-      U 2 (#caa173)
-      L 1 (#1b58a2)
-      U 2 (#caa171)
-      R 2 (#7807d2)
-      U 3 (#a77fa3)
-      L 2 (#015232)
-      U 2 (#7a21e3)
+      px{a<2006:qkq,m>2090:A,rfg}
+      pv{a>1716:R,A}
+      lnx{m>1548:A,A}
+      rfg{s<537:gd,x>2440:R,A}
+      qs{s>3448:A,lnx}
+      qkq{x<1416:A,crn}
+      crn{x>2662:A,R}
+      in{s<1351:px,qqz}
+      qqz{s>2770:qs,m<1801:hdj,R}
+      gd{a>3333:R,R}
+      hdj{m>838:A,pv}
       """
       |> StringHelper.to_lines()
 
-    assert Day19.solve_b(input) == 952_408_144_115
+    assert Day19.solve_b(input) == 167_409_079_868_000
   end
 
-  @tag :skip
   test "solves b" do
     input = FileHelper.read_as_lines(19)
-    assert Day19.solve_b(input) == 42_617_947_302_920
+    assert Day19.solve_b(input) == 131_796_824_371_749
   end
 end
