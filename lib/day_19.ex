@@ -86,7 +86,7 @@ defmodule Day19 do
     |> Enum.sum()
   end
 
-  def calculate_permutations(workflows, worfklow_key, instruction_number, ranges, cur_ranges) do
+  def calculate_permutations(workflows, worfklow_key, instruction_number, cur_ranges) do
     case worfklow_key do
       "A" ->
         [cur_ranges.x, cur_ranges.m, cur_ranges.a, cur_ranges.s]
@@ -121,7 +121,6 @@ defmodule Day19 do
                 workflows,
                 next_worfklow_key,
                 0,
-                ranges,
                 new_cur_ranges
               )
 
@@ -138,7 +137,6 @@ defmodule Day19 do
                 workflows,
                 worfklow_key,
                 instruction_number + 1,
-                ranges,
                 new_cur_ranges
               )
 
@@ -162,7 +160,6 @@ defmodule Day19 do
                 workflows,
                 next_worfklow_key,
                 0,
-                ranges,
                 new_cur_ranges
               )
 
@@ -179,7 +176,6 @@ defmodule Day19 do
                 workflows,
                 worfklow_key,
                 instruction_number + 1,
-                ranges,
                 new_cur_ranges
               )
 
@@ -192,7 +188,6 @@ defmodule Day19 do
               workflows,
               next_worfklow_key,
               0,
-              ranges,
               cur_ranges
             )
         end
@@ -202,8 +197,6 @@ defmodule Day19 do
   def solve_b(input) do
     workflows = input |> parse_workflows()
 
-    ranges = %{x: MapSet.new(), m: MapSet.new(), a: MapSet.new(), s: MapSet.new()}
-
     cur_ranges = %{
       x: MapSet.new(1..4000),
       m: MapSet.new(1..4000),
@@ -211,6 +204,6 @@ defmodule Day19 do
       s: MapSet.new(1..4000)
     }
 
-    calculate_permutations(workflows, "in", 0, ranges, cur_ranges)
+    calculate_permutations(workflows, "in", 0, cur_ranges)
   end
 end
