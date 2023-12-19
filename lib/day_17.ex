@@ -55,7 +55,7 @@ defmodule Day17 do
       |> Map.values()
       |> Enum.min_max_by(fn tile -> {tile.pos.x, tile.pos.y} end)
 
-    first_move = %{order: 0, pos: target.pos, heat_lossed: target.heat - start.heat, steps: []}
+    first_move = %{order: 0, pos: start.pos, heat_lossed: 0, steps: []}
 
     alias Prioqueue.Helper
 
@@ -66,13 +66,13 @@ defmodule Day17 do
 
     visited = MapSet.new()
 
-    [start]
+    [target]
     |> Stream.cycle()
     |> Enum.reduce_while({queue, visited}, fn target, {prio_queue, visited_cache} ->
       {:ok, {move, prio_queue}} =
         prio_queue |> Prioqueue.extract_min()
 
-      case Position.equals?(move.pos, target.pos) && move.heat_lossed < 1250 do
+      case Position.equals?(move.pos, target.pos) do
         true ->
           {:halt, move.heat_lossed}
 
@@ -81,19 +81,28 @@ defmodule Day17 do
            get_around(move.pos, move.steps)
            |> Enum.filter(fn pos -> grid |> Map.has_key?(pos) end)
            |> Enum.reduce({prio_queue, visited_cache}, fn pos, {acc_queue, acc_cache} ->
-             cache_key =
-               [pos.x, pos.y, move.heat_lossed] |> Enum.join(",")
+             direction =
+               cond do
+                 move.steps |> length() == 0 -> ""
+                 true -> move.steps |> Enum.take(7) |> Enum.join()
+               end
+
+             cache_key = [pos.x, pos.y, direction] |> Enum.join(",")
 
              case acc_cache |> MapSet.member?(cache_key) do
                true ->
                  {acc_queue, acc_cache}
 
                false ->
-                 steps = get_last_steps(pos, move.pos, move.steps) |> Enum.take(3)
+                 steps = get_last_steps(pos, move.pos, move.steps)
                  tile = grid |> Map.get(pos)
 
-                 heat_lossed = move.heat_lossed + tile.heat
-                 distance_to_target = Position.manhattan_distance_to(pos, target.pos)
+                 # 1247 2,3
+                 # 1244 2,1
+                 # 1241 2,1
+                 # 1238 Enum.take(7)heat_lossed =  50, distance to 100
+                 heat_lossed = move.heat_lossed * 50
+                 distance_to_target = Position.manhattan_distance_to(pos, target.pos) * 100
 
                  step = %{
                    order: heat_lossed + distance_to_target,
@@ -110,6 +119,73 @@ defmodule Day17 do
   end
 
   def solve_b(input) do
-    1
+    grid = input |> construct_grid()
+
+    {start, target} =
+      grid
+      |> Map.values()
+      |> Enum.min_max_by(fn tile -> {tile.pos.x, tile.pos.y} end)
+
+    first_move = %{order: 0, pos: start.pos, heat_lossed: 0, steps: []}
+
+    alias Prioqueue.Helper
+
+    queue =
+      Prioqueue.new([first_move],
+        cmp_fun: fn a, b -> Helper.cmp(a.order, b.order) end
+      )
+
+    visited = MapSet.new()
+
+    [target]
+    |> Stream.cycle()
+    |> Enum.reduce_while({queue, visited}, fn target, {prio_queue, visited_cache} ->
+      {:ok, {move, prio_queue}} =
+        prio_queue |> Prioqueue.extract_min()
+
+      case Position.equals?(move.pos, target.pos) do
+        true ->
+          {:halt, move.heat_lossed}
+
+        false ->
+          {:cont,
+           get_around(move.pos, move.steps)
+           |> Enum.filter(fn pos -> grid |> Map.has_key?(pos) end)
+           |> Enum.reduce({prio_queue, visited_cache}, fn pos, {acc_queue, acc_cache} ->
+             direction =
+               cond do
+                 move.steps |> length() == 0 -> ""
+                 true -> move.steps |> Enum.take(3) |> Enum.join()
+               end
+
+             cache_key = [pos.x, pos.y, direction] |> Enum.join(",")
+
+             case acc_cache |> MapSet.member?(cache_key) do
+               true ->
+                 {acc_queue, acc_cache}
+
+               false ->
+                 steps = get_last_steps(pos, move.pos, move.steps)
+                 tile = grid |> Map.get(pos)
+
+                 # 1247 2,3
+                 # 1244 2,1
+                 # 1241 2,1
+                 # 1238 Enum.take(7)heat_lossed =  50, distance to 100
+                 heat_lossed = move.heat_lossed * 50
+                 distance_to_target = Position.manhattan_distance_to(pos, target.pos) * 100
+
+                 step = %{
+                   order: heat_lossed + distance_to_target,
+                   pos: pos,
+                   heat_lossed: move.heat_lossed + tile.heat,
+                   steps: steps
+                 }
+
+                 {acc_queue |> Prioqueue.insert(step), acc_cache |> MapSet.put(cache_key)}
+             end
+           end)}
+      end
+    end)
   end
 end
