@@ -1,9 +1,9 @@
-defmodule AdventOfCode2018.MixProject do
+defmodule AdventOfCode2023.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :advent_of_code_2018,
+      app: :advent_of_code_2023,
       version: "0.1.0",
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
@@ -22,6 +22,7 @@ defmodule AdventOfCode2018.MixProject do
   defp deps do
     [
       {:memoize, "~> 1.4"},
+      {:prioqueue, "~> 0.2.0"},
       {:mix_test_watch, "~> 1.1", only: :dev}
     ]
   end

@@ -24,6 +24,14 @@ defmodule Position do
     ]
   end
 
+  def adjacent(pos) do
+    [
+      up(pos),
+      right(pos),
+      down(pos),
+      left(pos)
+    ]
+  end
 
   def up(%Position{x: x, y: y}), do: %Position{x: x, y: y - 1}
 
