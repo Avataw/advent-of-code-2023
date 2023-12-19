@@ -97,10 +97,6 @@ defmodule Day17 do
                  steps = get_last_steps(pos, move.pos, move.steps)
                  tile = grid |> Map.get(pos)
 
-                 # 1247 2,3
-                 # 1244 2,1
-                 # 1241 2,1
-                 # 1238 Enum.take(7)heat_lossed =  50, distance to 100
                  heat_lossed = move.heat_lossed * 50
                  distance_to_target = Position.manhattan_distance_to(pos, target.pos) * 100
 
@@ -118,6 +114,40 @@ defmodule Day17 do
     end)
   end
 
+  def get_around_b(pos, last_steps) do
+    last_steps = last_steps |> Enum.take(10)
+
+    last_step = last_steps |> hd()
+
+    locked = last_steps |> Enum.take_while(fn step -> step == last_step end)
+
+    cond do
+      locked |> length() < 4 ->
+        case last_step do
+          :up -> [Position.up(pos)]
+          :right -> [Position.right(pos)]
+          :down -> [Position.down(pos)]
+          :left -> [Position.left(pos)]
+        end
+
+      locked |> length() < 10 ->
+        case last_step do
+          :up -> [Position.up(pos), Position.left(pos), Position.right(pos)]
+          :right -> [Position.up(pos), Position.right(pos), Position.down(pos)]
+          :down -> [Position.left(pos), Position.down(pos), Position.right(pos)]
+          :left -> [Position.left(pos), Position.down(pos), Position.up(pos)]
+        end
+
+      true ->
+        case last_step do
+          :up -> [Position.left(pos), Position.right(pos)]
+          :right -> [Position.up(pos), Position.down(pos)]
+          :down -> [Position.left(pos), Position.right(pos)]
+          :left -> [Position.down(pos), Position.up(pos)]
+        end
+    end
+  end
+
   def solve_b(input) do
     grid = input |> construct_grid()
 
@@ -126,12 +156,19 @@ defmodule Day17 do
       |> Map.values()
       |> Enum.min_max_by(fn tile -> {tile.pos.x, tile.pos.y} end)
 
-    first_move = %{order: 0, pos: start.pos, heat_lossed: 0, steps: []}
+    right = Position.right(start.pos)
+    right_tile = Map.get(grid, right)
+
+    down = Position.down(start.pos)
+    down_tile = Map.get(grid, down)
+
+    first_move = %{order: 0, pos: right, heat_lossed: right_tile.heat, steps: [:right]}
+    second_move = %{order: 0, pos: down, heat_lossed: down_tile.heat, steps: [:down]}
 
     alias Prioqueue.Helper
 
     queue =
-      Prioqueue.new([first_move],
+      Prioqueue.new([first_move, second_move],
         cmp_fun: fn a, b -> Helper.cmp(a.order, b.order) end
       )
 
@@ -143,19 +180,26 @@ defmodule Day17 do
       {:ok, {move, prio_queue}} =
         prio_queue |> Prioqueue.extract_min()
 
-      case Position.equals?(move.pos, target.pos) do
+      last_step = move.steps |> hd()
+
+      last_steps = move.steps |> Enum.take_while(fn s -> s == last_step end)
+
+      skip = length(last_steps) < 4
+
+      case Position.equals?(move.pos, target.pos) && !skip do
         true ->
+          IO.inspect(move.steps)
           {:halt, move.heat_lossed}
 
         false ->
           {:cont,
-           get_around(move.pos, move.steps)
+           get_around_b(move.pos, move.steps)
            |> Enum.filter(fn pos -> grid |> Map.has_key?(pos) end)
            |> Enum.reduce({prio_queue, visited_cache}, fn pos, {acc_queue, acc_cache} ->
              direction =
                cond do
                  move.steps |> length() == 0 -> ""
-                 true -> move.steps |> Enum.take(3) |> Enum.join()
+                 true -> move.steps |> Enum.take(20) |> Enum.join()
                end
 
              cache_key = [pos.x, pos.y, direction] |> Enum.join(",")
@@ -168,12 +212,8 @@ defmodule Day17 do
                  steps = get_last_steps(pos, move.pos, move.steps)
                  tile = grid |> Map.get(pos)
 
-                 # 1247 2,3
-                 # 1244 2,1
-                 # 1241 2,1
-                 # 1238 Enum.take(7)heat_lossed =  50, distance to 100
-                 heat_lossed = move.heat_lossed * 50
-                 distance_to_target = Position.manhattan_distance_to(pos, target.pos) * 100
+                 heat_lossed = move.heat_lossed * 2
+                 distance_to_target = Position.manhattan_distance_to(pos, target.pos) * 5
 
                  step = %{
                    order: heat_lossed + distance_to_target,

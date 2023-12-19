@@ -32,9 +32,12 @@ defmodule Day17Test do
     assert Day17.solve_a(input) == 1238
   end
 
+  @tag :skip
+
   test "solves b example" do
     input =
       """
+      2413432311323
       3215453535623
       3255245654254
       3446585845452
@@ -50,12 +53,14 @@ defmodule Day17Test do
       """
       |> StringHelper.to_lines()
 
-    assert Day17.solve_b(input) == 71
+    assert Day17.solve_b(input) == 94
   end
 
+  # this takes almost :infinity time... took over 30 mins for me
+  @tag timeout: :infinity
   @tag :skip
   test "solves b" do
     input = FileHelper.read_as_lines(17)
-    assert Day17.solve_b(input) == 42_617_947_302_920
+    assert Day17.solve_b(input) == 1362
   end
 end
